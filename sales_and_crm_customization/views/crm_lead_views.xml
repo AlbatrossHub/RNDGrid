@@ -7,11 +7,6 @@
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="before">
                     <group>
-                        <group string="Material Information">
-                            <field name="rndgrid_material_name"/>
-                            <field name="rndgrid_sample_type"/>
-                            <field name="rndgrid_is_hazardous" widget="boolean_toggle"/>
-                        </group>
                         <group string="Information">
                             <field name="rndgrid_segment"/>
                             <field name="institute_name"/>
@@ -20,6 +15,9 @@
                     <separator string="Tests Needed"/>
                     <field name="rndgrid_test_line_ids" nolabel="1">
                         <list editable="bottom">
+                            <field name="rndgrid_material_name"/>
+                            <field name="rndgrid_sample_type"/>
+                            <field name="rndgrid_is_hazardous" widget="boolean_toggle"/>
                             <field name="instrument_id"/>
                             <field name="test_ids" widget="many2many_tags" options="{'no_create': True}"/>
                         </list>
