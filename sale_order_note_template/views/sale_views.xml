@@ -1,0 +1,30 @@
+<odoo>
+<record id="view_order_form_inherit_custom" model="ir.ui.view">
+    <field name="name">sale.order.form.inherit.custom</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="arch" type="xml">
+        <!-- Locate the note field and insert the new fields before it -->
+        <xpath expr="//field[@name='note']" position="before">
+            <field name="terms_template_id"/>
+            <field name="want_note"/>
+        </xpath>
+    </field>
+</record>
+<!--     <record id="view_order_form_inherit_disable_add_edit" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <field name="order_line" position="replace">
+                <field
+                    name="order_line"
+                    widget="section_and_note_one2many"
+                    mode="tree,kanban"
+                    options="{'no_quick_create': True, 'no_create': True, 'no_create_edit':True}"
+                    attrs="{'readonly': [('state', 'in', ('done','cancel'))]}"
+                >
+            </field>
+        </field>
+    </record> -->
+</odoo>

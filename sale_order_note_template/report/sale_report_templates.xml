@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit the main sale order document template to conditionally show terms -->
+    <template id="report_saleorder_document_conditional_terms" inherit_id="sale.report_saleorder_document">
+        <!-- Conditionally show the main note field -->
+        <xpath expr="//span[@name='order_note']" position="replace">
+            <t t-if="doc.want_note">
+                <span t-field="doc.note" t-attf-style="#{'text-align:justify;text-justify:inter-word;' if doc.company_id.terms_type != 'html' else ''}" name="order_note"/>
+            </t>
+        </xpath>
+        
+        <!-- Conditionally show payment terms -->
+        <xpath expr="//p[@t-if='not is_html_empty(doc.payment_term_id.note)']" position="replace">
+            <t t-if="doc.want_note and not is_html_empty(doc.payment_term_id.note)">
+                <p>
+                    <span t-field="doc.payment_term_id.note"/>
+                </p>
+            </t>
+        </xpath>
+        
+        <!-- Conditionally show fiscal position remarks -->
+        <xpath expr="//p[@id='fiscal_position_remark']" position="replace">
+            <t t-if="doc.want_note and doc.fiscal_position_id and not is_html_empty(doc.fiscal_position_id.sudo().note)">
+                <p id="fiscal_position_remark">
+                    <strong>Fiscal Position Remark:</strong>
+                    <span t-field="doc.fiscal_position_id.sudo().note"/>
+                </p>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Inherit the pro-forma sale order document template to conditionally show terms -->
+    <template id="report_saleorder_pro_forma_conditional_terms" inherit_id="sale.report_saleorder_pro_forma">
+        <xpath expr="//t[@t-call='sale.report_saleorder_document']" position="attributes">
+            <attribute name="t-call">sale_order_note_template.report_saleorder_document_conditional_terms</attribute>
+        </xpath>
+    </template>
+</odoo> 

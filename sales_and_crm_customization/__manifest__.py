@@ -14,7 +14,7 @@ Captures specific sample and testing requirements directly on the CRM Lead.
     """,
     'category': 'Sales/CRM',
     'author': 'RNDGrid',
-    'depends': ['crm', 'sale_management', 'RNDGrid_Customization'],
+    'depends': ['crm', 'sale_management', 'sale_crm', 'RNDGrid_Customization'],
     'data': [
         'security/ir.model.access.csv',
         'wizard/rndgrid_vendor_selector_wizard_views.xml',

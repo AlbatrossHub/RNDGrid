@@ -29,6 +29,27 @@ class CrmLead(models.Model):
         string='Requested Tests'
     )
 
+    def _prepare_opportunity_quotation_context(self):
+        """ Override to auto-populate sale.order.lines with the requested tests """
+        quotation_context = super(CrmLead, self)._prepare_opportunity_quotation_context()
+        
+        # Build the default order lines from the requested tests
+        order_lines = []
+        for line in self.rndgrid_test_line_ids:
+            for test in line.test_ids:
+                order_lines.append((0, 0, {
+                    'product_id': test.product_variant_id.id,
+                    'product_template_id': test.id,
+                    'name': test.name,
+                    'product_uom_qty': 1.0,
+                    'rndgrid_instrument_id': line.instrument_id.id,
+                }))
+        
+        if order_lines:
+            quotation_context['default_order_line'] = order_lines
+            
+        return quotation_context
+
 
 class CrmLeadRndGridTest(models.Model):
     _name = 'crm.lead.rndgrid.test'
