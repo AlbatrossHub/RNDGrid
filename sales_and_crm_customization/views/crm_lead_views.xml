@@ -36,6 +36,11 @@
                         <field name="rndgrid_segment"/>
                     </span>
                 </div>
+                <div class="o_kanban_record_subtitle" invisible="not institute_name">
+                    <span class="badge text-bg-secondary">
+                        <field name="institute_name"/>
+                    </span>
+                </div>
             </xpath>
         </field>
     </record>

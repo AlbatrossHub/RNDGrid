@@ -17,3 +17,4 @@ class ResPartner(models.Model):
         string='Lab Instruments',
         help="Instruments available at this lab."
     )
+    institute_name = fields.Char(string="Institute Name")

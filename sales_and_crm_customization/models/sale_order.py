@@ -9,3 +9,8 @@ class SaleOrder(models.Model):
         string='User Type',
         readonly=True,
     )
+    institute_name = fields.Char(
+        related='partner_id.institute_name',
+        string='Institute Name',
+        readonly=True,
+    )

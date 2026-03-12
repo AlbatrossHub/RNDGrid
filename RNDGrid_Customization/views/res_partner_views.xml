@@ -9,6 +9,7 @@
             <xpath expr="//field[@name='category_id']" position="after">
                 <field name="is_lab"/>
                 <field name="rndgrid_segment" invisible="is_lab"/>
+                <field name="institute_name" invisible="is_lab"/>
             </xpath>
             <xpath expr="//page[@name='contact_addresses']" position="attributes">
                 <attribute name="autofocus"></attribute>

@@ -28,6 +28,11 @@ class CrmLead(models.Model):
         'crm.lead.rndgrid.test', 'lead_id', 
         string='Requested Tests'
     )
+    institute_name = fields.Char(
+        related='partner_id.institute_name',
+        string='Institute Name',
+        readonly=True,
+    )
 
     def _prepare_opportunity_quotation_context(self):
         """ Override to auto-populate sale.order.lines with the requested tests """
