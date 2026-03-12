@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top menu item -->
+    <menuitem id="menu_rndgrid_root"
+              name="RNDGrid"
+              web_icon="RNDGrid_Customization,static/description/icon.png"
+              sequence="10"/>
+
+    <menuitem id="menu_rndgrid_labs"
+              name="Labs"
+              parent="menu_rndgrid_root"
+              action="contacts.action_contacts"
+              sequence="10"/>
+
+    <!-- Need to update filter for Action Contacts to show only labs later, but using it as a starting point -->
+
+    <menuitem id="menu_rndgrid_instruments"
+              name="Instruments"
+              parent="menu_rndgrid_root"
+              sequence="20"/>
+
+    <menuitem id="menu_rndgrid_tests"
+              name="Tests (Products)"
+              parent="menu_rndgrid_root"
+              action="product.product_template_action"
+              sequence="30"/>
+</odoo>

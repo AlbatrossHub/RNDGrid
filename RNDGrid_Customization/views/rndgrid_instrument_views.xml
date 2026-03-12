@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- rndgrid.instrument Form View -->
+    <record id="view_rndgrid_instrument_form" model="ir.ui.view">
+        <field name="name">rndgrid.instrument.form</field>
+        <field name="model">rndgrid.instrument</field>
+        <field name="arch" type="xml">
+            <form string="Instrument">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Instrument Name (e.g., AFM)"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="active" invisible="1"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- rndgrid.instrument Tree View -->
+    <record id="view_rndgrid_instrument_tree" model="ir.ui.view">
+        <field name="name">rndgrid.instrument.tree</field>
+        <field name="model">rndgrid.instrument</field>
+        <field name="arch" type="xml">
+            <list string="Instruments">
+                <field name="name"/>
+                <field name="description"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- rndgrid.instrument Action -->
+    <record id="action_rndgrid_instrument" model="ir.actions.act_window">
+        <field name="name">Instruments</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">rndgrid.instrument</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new Instrument!
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_rndgrid_instrument_action"
+              name="Instruments List"
+              parent="menu_rndgrid_instruments"
+              action="action_rndgrid_instrument"
+              sequence="10"/>
+
+</odoo>

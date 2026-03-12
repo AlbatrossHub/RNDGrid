@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add Fields to Partner Form -->
+    <record id="view_partner_form_inherit_rndgrid" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.rndgrid</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="is_lab"/>
+                <field name="rndgrid_segment" invisible="is_lab"/>
+            </xpath>
+            <xpath expr="//page[@name='contact_addresses']" position="before">
+                <page name="rndgrid_lab" string="Lab Instruments" invisible="not is_lab">
+                    <field name="lab_instrument_ids">
+                        <list editable="bottom">
+                            <field name="instrument_id"/>
+                            <field name="test_ids" widget="many2many_tags"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Labs Menu Action -->
+    <record id="action_rndgrid_labs" model="ir.actions.act_window">
+        <field name="name">Labs</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('is_lab', '=', True)]</field>
+        <field name="context">{'default_is_lab': True, 'default_is_company': True}</field>
+    </record>
+
+    <!-- Replace the original contacts action with specific lab action in our menu -->
+    <menuitem id="menu_rndgrid_labs"
+              name="Labs"
+              parent="menu_rndgrid_root"
+              action="action_rndgrid_labs"
+              sequence="10"/>
+</odoo>
