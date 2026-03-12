@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crm_lead_rndgrid_test,crm.lead.rndgrid.test,model_crm_lead_rndgrid_test,base.group_user,1,1,1,1
+access_rndgrid_vendor_selector_wizard,rndgrid.vendor.selector.wizard,model_rndgrid_vendor_selector_wizard,base.group_user,1,1,1,1
+access_rndgrid_vendor_selector_wizard_line,rndgrid.vendor.selector.wizard.line,model_rndgrid_vendor_selector_wizard_line,base.group_user,1,1,1,1
+

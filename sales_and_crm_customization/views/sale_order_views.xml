@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_order_view_form_inherit_rndgrid" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.rndgrid</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- In Odoo 19, the order line fields are typically inside the order_line tree view -->
+            <xpath expr="//field[@name='order_line']/list/field[@name='name']" position="after">
+                <field name="rndgrid_instrument_id" optional="show"/>
+                <field name="rndgrid_lab_id" optional="show"/>
+                <button name="view_available_vendors" type="object" icon="fa-eye" title="Select Vendor" class="btn-primary"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
