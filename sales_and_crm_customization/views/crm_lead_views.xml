@@ -12,6 +12,10 @@
                             <field name="rndgrid_sample_type"/>
                             <field name="rndgrid_is_hazardous"/>
                         </group>
+                        <group string="Information">
+                            <field name="rndgrid_segment"/>
+                            <field name="institute_name"/>
+                        </group>
                     </group>
                     <separator string="Tests Needed"/>
                     <field name="rndgrid_test_line_ids" nolabel="1">

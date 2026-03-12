@@ -12,6 +12,10 @@
                 <field name="rndgrid_cost" optional="show"/>
                 <button name="view_available_vendors" type="object" icon="fa-eye" title="Select Vendor" class="btn-primary"/>
             </xpath>
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="rndgrid_segment"/>
+                <field name="institute_name"/>
+            </xpath>
         </field>
     </record>
 
