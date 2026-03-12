@@ -20,6 +20,17 @@
                             <field name="description"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page name="associated_tests" string="Associated Tests">
+                            <field name="test_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="list_price"/>
+                                    <field name="description_sale"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

@@ -8,6 +8,11 @@ class RndGridInstrument(models.Model):
     name = fields.Char(string='Instrument Name', required=True)
     description = fields.Text(string='Description')
     active = fields.Boolean(default=True, string='Active')
+    test_ids = fields.One2many(
+        'product.template', 'instrument_id',
+        string='Associated Tests',
+        help="All tests/products that can be performed using this instrument."
+    )
 
 
 class RndGridLabInstrument(models.Model):
