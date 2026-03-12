@@ -10,7 +10,7 @@
                         <group string="Material Information">
                             <field name="rndgrid_material_name"/>
                             <field name="rndgrid_sample_type"/>
-                            <field name="rndgrid_is_hazardous"/>
+                            <field name="rndgrid_is_hazardous" widget="boolean_toggle"/>
                         </group>
                         <group string="Information">
                             <field name="rndgrid_segment"/>

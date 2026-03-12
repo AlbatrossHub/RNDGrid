@@ -6,8 +6,8 @@ class RndGridInstrument(models.Model):
     _description = 'RNDGrid Instrument'
 
     name = fields.Char(string='Instrument Name', required=True)
-    description = fields.Text(string='Description')
-    active = fields.Boolean(default=True, string='Active')
+    description = fields.Text(string='Description', Tracking=True)
+    active = fields.Boolean(default=True, string='Active', Tracking=True)
     test_ids = fields.One2many(
         'product.template', 'instrument_id',
         string='Associated Tests',
