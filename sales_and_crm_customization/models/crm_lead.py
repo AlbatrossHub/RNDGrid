@@ -5,6 +5,11 @@ class CrmLead(models.Model):
     _inherit = 'crm.lead'
 
     rndgrid_material_name = fields.Char(string='Material Name')
+    rndgrid_segment = fields.Selection(
+        related='partner_id.rndgrid_segment',
+        string='Segment',
+        readonly=True,
+    )
     rndgrid_sample_type = fields.Selection([
         ('liquid', 'Liquid'),
         ('solid', 'Solid'),

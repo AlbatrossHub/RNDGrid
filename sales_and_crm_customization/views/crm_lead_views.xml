@@ -23,4 +23,32 @@
             </xpath>
         </field>
     </record>
+
+    <!-- CRM Kanban View -->
+    <record id="crm_case_kanban_view_leads_inherit_rndgrid" model="ir.ui.view">
+        <field name="name">crm.lead.kanban.inherit.rndgrid</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_kanban_content')]//div[hasclass('o_kanban_record_bottom')]" position="before">
+                <div class="o_kanban_record_subtitle" invisible="not rndgrid_segment">
+                    <span class="badge rounded-pill text-bg-info">
+                        <field name="rndgrid_segment"/>
+                    </span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- CRM List View (Opportunities) -->
+    <record id="crm_case_tree_view_oppor_inherit_rndgrid" model="ir.ui.view">
+        <field name="name">crm.lead.tree.inherit.rndgrid</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="rndgrid_segment" optional="show"/>
+            </field>
+        </field>
+    </record>
 </odoo>

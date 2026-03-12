@@ -25,6 +25,21 @@ class RndGridVendorSelectorWizardLine(models.TransientModel):
 
     def action_select_vendor(self):
         self.ensure_one()
-        if self.wizard_id.line_id:
-            self.wizard_id.line_id.rndgrid_lab_id = self.partner_id
+        line = self.wizard_id.line_id
+        if line:
+            line.rndgrid_lab_id = self.partner_id
+            
+            # Determine cost based on customer segment
+            segment = line.order_id.partner_id.rndgrid_segment
+            if segment == 'student':
+                cost = self.price_student
+            elif segment == 'startup':
+                cost = self.price_startup
+            elif segment == 'industry':
+                cost = self.price_industry
+            else:
+                cost = 0.0 # Default if no segment
+                
+            line.rndgrid_cost = cost
+                
         return {'type': 'ir.actions.act_window_close'}

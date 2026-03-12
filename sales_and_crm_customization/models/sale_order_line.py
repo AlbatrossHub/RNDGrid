@@ -11,9 +11,13 @@ class SaleOrderLine(models.Model):
     )
     rndgrid_lab_id = fields.Many2one(
         'res.partner', 
-        string='Assigned Lab',
+        string='Lab',
         domain="[('is_lab', '=', True)]",
         help="The lab assigned to perform this test."
+    )
+    rndgrid_cost = fields.Monetary(
+        string='Cost',
+        help="The cost price of this test from the assigned lab based on the customer's segment."
     )
 
     @api.onchange('product_template_id', 'product_id')

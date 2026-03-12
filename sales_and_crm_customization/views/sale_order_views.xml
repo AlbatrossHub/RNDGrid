@@ -9,8 +9,33 @@
             <xpath expr="//field[@name='order_line']/list/field[@name='name']" position="after">
                 <field name="rndgrid_instrument_id" optional="show"/>
                 <field name="rndgrid_lab_id" optional="show"/>
+                <field name="rndgrid_cost" optional="show"/>
                 <button name="view_available_vendors" type="object" icon="fa-eye" title="Select Vendor" class="btn-primary"/>
             </xpath>
+        </field>
+    </record>
+
+    <!-- Sale Order List View -->
+    <record id="view_order_tree_inherit_rndgrid" model="ir.ui.view">
+        <field name="name">sale.order.tree.inherit.rndgrid</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="rndgrid_segment" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Quotation List View -->
+    <record id="view_quotation_tree_inherit_rndgrid" model="ir.ui.view">
+        <field name="name">sale.quotation.tree.inherit.rndgrid</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="rndgrid_segment" optional="show"/>
+            </field>
         </field>
     </record>
 </odoo>
