@@ -10,7 +10,7 @@ class ResPartner(models.Model):
         ('student', 'Student'),
         ('startup', 'Startup'),
         ('industry', 'Industry')
-    ], string='RNDGrid Customer Segment', help="Segment used for specific pricing rules.")
+    ], string='User Type', help="Segment used for specific pricing rules.")
 
     lab_instrument_ids = fields.One2many(
         'rndgrid.lab.instrument', 'lab_id', 

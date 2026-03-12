@@ -7,7 +7,7 @@ class CrmLead(models.Model):
     rndgrid_material_name = fields.Char(string='Material Name')
     rndgrid_segment = fields.Selection(
         related='partner_id.rndgrid_segment',
-        string='Segment',
+        string='User Type',
         readonly=True,
     )
     rndgrid_sample_type = fields.Selection([

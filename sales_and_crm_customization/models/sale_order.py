@@ -6,6 +6,6 @@ class SaleOrder(models.Model):
 
     rndgrid_segment = fields.Selection(
         related='partner_id.rndgrid_segment',
-        string='Segment',
+        string='User Type',
         readonly=True,
     )
