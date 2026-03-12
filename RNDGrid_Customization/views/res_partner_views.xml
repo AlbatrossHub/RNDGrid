@@ -10,8 +10,11 @@
                 <field name="is_lab"/>
                 <field name="rndgrid_segment" invisible="is_lab"/>
             </xpath>
+            <xpath expr="//page[@name='contact_addresses']" position="attributes">
+                <attribute name="autofocus"></attribute>
+            </xpath>
             <xpath expr="//page[@name='contact_addresses']" position="before">
-                <page name="rndgrid_lab" string="Lab Instruments" invisible="not is_lab">
+                <page name="rndgrid_lab" string="Lab Instruments" autofocus="autofocus" invisible="not is_lab">
                     <field name="lab_instrument_ids">
                         <list editable="bottom">
                             <field name="instrument_id"/>
