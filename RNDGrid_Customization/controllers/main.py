@@ -311,3 +311,152 @@ class RndGridApiController(http.Controller):
                 'status': 'error',
                 'message': str(e)
             }
+
+    @http.route('/api/rndgrid/create/expert', type='json', auth='public', methods=['POST'], csrf=False)
+    def create_expert(self, **payload):
+        """
+        Public endpoint to create a new res.partner object as an Expert.
+        """
+        name = payload.get('name')
+        if not name:
+            return {'status': 'error', 'message': 'Name is required'}
+            
+        expert_vals = {
+            'name': name,
+            'is_expert': True,
+            'email': payload.get('email'),
+            'phone': payload.get('phone'),
+            'city': payload.get('city'),
+            'linkedin_url': payload.get('linkedin_url'),
+            'google_scholar_url': payload.get('google_scholar_url'),
+            'highest_degree': payload.get('highest_degree'),
+            'field_of_research': payload.get('field_of_research'),
+            'current_affiliation': payload.get('current_affiliation'),
+            'current_position': payload.get('current_position'),
+            'services_provided': payload.get('services_provided'),
+            'other_services_expert': payload.get('other_services_expert'),
+        }
+
+        # Safe integer parsing
+        if payload.get('research_experience_years'):
+            try: expert_vals['research_experience_years'] = int(payload.get('research_experience_years'))
+            except: pass
+        if payload.get('total_publications'):
+            try: expert_vals['total_publications'] = int(payload.get('total_publications'))
+            except: pass
+        if payload.get('total_patents_ip'):
+            try: expert_vals['total_patents_ip'] = int(payload.get('total_patents_ip'))
+            except: pass
+
+        try:
+            partner = request.env['res.partner'].sudo().create(expert_vals)
+            
+            document_url = payload.get('document_url')
+            if document_url:
+                request.env['ir.attachment'].sudo().create({
+                    'name': 'Expert Document (S3)',
+                    'type': 'url',
+                    'url': document_url,
+                    'res_model': 'res.partner',
+                    'res_id': partner.id
+                })
+                partner.sudo().message_post(body=f"Document uploaded via API: <a href='{document_url}' target='_blank'>View Document</a>")
+                
+            return {
+                'status': 'success',
+                'partner_id': partner.id,
+                'message': 'Expert created successfully'
+            }
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+    @http.route('/api/rndgrid/create/startup', type='json', auth='public', methods=['POST'], csrf=False)
+    def create_startup(self, **payload):
+        """
+        Public endpoint to create a new Startup Company and link multiple founding contacts.
+        """
+        startup_name = payload.get('startup_name')
+        founded_year = payload.get('founded_year')
+        founders = payload.get('founders', [])
+
+        if not startup_name:
+            return {'status': 'error', 'message': 'startup_name is mandatory.'}
+            
+        if not founders or not isinstance(founders, list):
+            return {'status': 'error', 'message': 'A list of founders is required.'}
+
+        try:
+            # Duplication Check logic
+            # Search if any of the provided founder emails already exist for this founding year
+            for founder in founders:
+                founder_email = founder.get('email')
+                if not founder_email:
+                    continue
+                    
+                existing_email_partners = request.env['res.partner'].sudo().search([('email', '=', founder_email)])
+                for p in existing_email_partners:
+                    # Check if the partner or its parent company has the exact same founding year
+                    check_company = p.parent_id if p.parent_id else p
+                    if check_company.founded_year == founded_year:
+                        return {
+                            'status': 'error', 
+                            'message': f"Duplicate Error: A startup with founding year {founded_year} and founder email {founder_email} already exists."
+                        }
+
+            # Create Startup Company
+            company_vals = {
+                'name': startup_name,
+                'is_company': True,
+                'is_startup': True,
+                'founded_year': founded_year,
+                'industry_work_area': payload.get('industry_work_area'),
+                'startup_overview': payload.get('startup_overview'),
+                'target_market_segment': payload.get('target_market_segment'),
+                'awards_recognition': payload.get('awards_recognition'),
+                'patent_detail': payload.get('patent_detail'),
+            }
+
+            if payload.get('patents_filed'):
+                try: company_vals['patents_filed'] = int(payload.get('patents_filed'))
+                except: pass
+            if payload.get('patents_granted'):
+                try: company_vals['patents_granted'] = int(payload.get('patents_granted'))
+                except: pass
+
+            company = request.env['res.partner'].sudo().create(company_vals)
+
+            # Create Founder Contacts Linked to the Company
+            founder_ids = []
+            for founder in founders:
+                founder_vals = {
+                    'name': founder.get('name', 'Unknown Founder'),
+                    'is_company': False,
+                    'type': 'contact',
+                    'parent_id': company.id,
+                    'email': founder.get('email'),
+                    'phone': founder.get('phone'),
+                    'comment': founder.get('intro'),
+                }
+                f_record = request.env['res.partner'].sudo().create(founder_vals)
+                founder_ids.append(f_record.id)
+
+            # Process Document URL
+            document_url = payload.get('document_url')
+            if document_url:
+                request.env['ir.attachment'].sudo().create({
+                    'name': 'Startup Document (S3)',
+                    'type': 'url',
+                    'url': document_url,
+                    'res_model': 'res.partner',
+                    'res_id': company.id
+                })
+                company.sudo().message_post(body=f"Document uploaded via API: <a href='{document_url}' target='_blank'>View Document</a>")
+
+            return {
+                'status': 'success',
+                'company_id': company.id,
+                'founder_ids': founder_ids,
+                'message': 'Startup and Founders created successfully'
+            }
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
