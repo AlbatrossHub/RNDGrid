@@ -417,10 +417,6 @@ class RndGridApiController(http.Controller):
                 'patent_detail': payload.get('patent_detail'),
             }
 
-            # Map the logo to Odoo's native image field if provided
-            if payload.get('startup_logo'):
-                company_vals['image_1920'] = payload.get('startup_logo')
-
             if payload.get('patents_filed'):
                 try: company_vals['patents_filed'] = int(payload.get('patents_filed'))
                 except: pass
@@ -448,6 +444,18 @@ class RndGridApiController(http.Controller):
                     
                 f_record = request.env['res.partner'].sudo().create(founder_vals)
                 founder_ids.append(f_record.id)
+
+            # Process Startup Logo URL
+            startup_logo = payload.get('startup_logo')
+            if startup_logo:
+                request.env['ir.attachment'].sudo().create({
+                    'name': 'Startup Logo (S3)',
+                    'type': 'url',
+                    'url': startup_logo,
+                    'res_model': 'res.partner',
+                    'res_id': company.id
+                })
+                company.sudo().message_post(body=f"Logo uploaded via API: <a href='{startup_logo}' target='_blank'>View Logo</a>")
 
             # Process Document URLs
             document_urls = payload.get('document_urls', [])
