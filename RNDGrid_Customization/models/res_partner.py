@@ -7,7 +7,7 @@ class ResPartner(models.Model):
     is_lab = fields.Boolean(string='Is Lab', default=False, help="Check this box if this contact is a testing Lab.", Tracking=True)
     
     rndgrid_segment = fields.Selection([
-        ('student', 'Student'),
+        ('academia', 'Academia'),
         ('startup', 'Startup'),
         ('industry', 'Industry')
     ], string='User Type', help="Segment used for specific pricing rules.", Tracking=True)
