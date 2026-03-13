@@ -3,7 +3,7 @@
     <!-- Top menu item -->
     <menuitem id="menu_rndgrid_root"
               name="RNDGrid"
-              web_icon="RNDGrid_Customization,static/description/icon.png"
+              web_icon="RNDGrid_Customization,static/app_icon.png"
               sequence="10"/>
 
     <menuitem id="menu_rndgrid_labs"
