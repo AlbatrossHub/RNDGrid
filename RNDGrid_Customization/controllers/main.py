@@ -229,22 +229,32 @@ class RndGridApiController(http.Controller):
     @http.route('/api/rndgrid/create/user', type='json', auth='public', methods=['POST'], csrf=False)
     def create_partner(self, **payload):
         """
-        Public endpoint to create a new res.partner object.
+        Public endpoint to create or update a res.partner object based on phone number.
         """
+        phone = payload.get('phone')
+        if phone:
+            phone = phone.strip()
+        
+        # Determine if we have a name (required only for creation, but good to have)
         name = payload.get('name')
-        if not name:
-            return {'status': 'error', 'message': 'Name is required'}
-            
-        partner_vals = {
-            'name': name,
-            'rndgrid_segment': payload.get('user_type'),
-            'email': payload.get('email'),
-            'phone': payload.get('phone'),
-            'vat': payload.get('gst_no'),
-            'zip': payload.get('zip'),
-            'city': payload.get('city'),
-            'street': payload.get('street'),
-        }
+        
+        partner_vals = {}
+        if name:
+            partner_vals['name'] = name
+        if 'user_type' in payload:
+            partner_vals['rndgrid_segment'] = payload.get('user_type')
+        if 'email' in payload:
+            partner_vals['email'] = payload.get('email')
+        if phone:
+            partner_vals['phone'] = phone
+        if 'gst_no' in payload:
+            partner_vals['vat'] = payload.get('gst_no')
+        if 'zip' in payload:
+            partner_vals['zip'] = payload.get('zip')
+        if 'city' in payload:
+            partner_vals['city'] = payload.get('city')
+        if 'street' in payload:
+            partner_vals['street'] = payload.get('street')
         
         state_name = payload.get('state')
         if state_name:
@@ -257,7 +267,25 @@ class RndGridApiController(http.Controller):
                 partner_vals['state_id'] = state.id
                 
         try:
-            partner = request.env['res.partner'].sudo().create(partner_vals)
+            partner = False
+            action_msg = ''
+            
+            # If phone is provided, search if partner exists
+            if phone:
+                partner = request.env['res.partner'].sudo().search([('phone', 'ilike', phone)], limit=1)
+            
+            if partner:
+                # Update existing partner
+                # Remove empty keys so we don't overwrite existing good data with None
+                update_vals = {k: v for k, v in partner_vals.items() if v is not None}
+                partner.sudo().write(update_vals)
+                action_msg = 'Partner updated successfully'
+            else:
+                # Create new partner
+                if not name:
+                    return {'status': 'error', 'message': 'Name is required to create a new partner'}
+                partner = request.env['res.partner'].sudo().create(partner_vals)
+                action_msg = 'Partner created successfully'
             
             document_url = payload.get('document_url')
             if document_url:
@@ -276,7 +304,7 @@ class RndGridApiController(http.Controller):
             return {
                 'status': 'success',
                 'partner_id': partner.id,
-                'message': 'Partner created successfully'
+                'message': action_msg
             }
         except Exception as e:
             return {
