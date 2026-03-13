@@ -420,6 +420,15 @@ class RndGridApiController(http.Controller):
                 'patent_detail': payload.get('patent_detail'),
             }
 
+            startup_logo_url = payload.get('startup_logo')
+            if startup_logo_url:
+                try:
+                    response = requests.get(startup_logo_url, timeout=10)
+                    if response.status_code == 200:
+                        company_vals['image_1920'] = base64.b64encode(response.content).decode('utf-8')
+                except Exception:
+                    pass
+
             if payload.get('patents_filed'):
                 try: company_vals['patents_filed'] = int(payload.get('patents_filed'))
                 except: pass
@@ -454,20 +463,8 @@ class RndGridApiController(http.Controller):
                 f_record = request.env['res.partner'].sudo().create(founder_vals)
                 founder_ids.append(f_record.id)
 
-            # Process Startup Logo URL
-            startup_logo = payload.get('startup_logo')
-            if startup_logo:
-                request.env['ir.attachment'].sudo().create({
-                    'name': 'Startup Logo (S3)',
-                    'type': 'url',
-                    'url': startup_logo,
-                    'res_model': 'res.partner',
-                    'res_id': company.id
-                })
-                company.sudo().message_post(body=f"Logo uploaded via API: <a href='{startup_logo}' target='_blank'>View Logo</a>")
-
             # Process Document URLs
-            document_urls = payload.get('document_urls', [])
+            document_urls = payload.get('document_url', [])
             if isinstance(document_urls, list) and document_urls:
                 attachment_msgs = []
                 for idx, url in enumerate(document_urls):
