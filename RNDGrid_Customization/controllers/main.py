@@ -7,6 +7,7 @@ class RndGridApiController(http.Controller):
 
     @http.route('/api/rndgrid/submit_request', type='json', auth='public', methods=['POST'], csrf=False)
     def create_lead(self, **payload):
+        print("payload\n", payload)
         """
         Public endpoint to create a CRM Lead.
         Expects a JSON payload like:
@@ -25,7 +26,8 @@ class RndGridApiController(http.Controller):
             ]
         }
         """
-        mobile = payload.get('mobile')
+        mobile = payload.get('mobile', '').strip()
+        print(">>>>>>>>>>>>>", mobile)
         if not mobile:
             return {'status': 'error', 'message': 'Mobile number is required'}
 
@@ -34,11 +36,8 @@ class RndGridApiController(http.Controller):
             return {'status': 'error', 'message': 'CRM module is not installed'}
 
         # Find the partner by mobile
-        partner = request.env['res.partner'].sudo().search([
-            '|', 
-            ('mobile', '=', mobile), 
-            ('phone', '=', mobile)
-        ], limit=1)
+        partner = request.env['res.partner'].sudo().search([('phone', 'ilike', mobile)], limit=1)
+        print("partner", partner)
 
         if not partner:
             return {'status': 'error', 'message': f'No partner found for mobile: {mobile}'}
