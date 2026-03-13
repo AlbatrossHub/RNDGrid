@@ -8,6 +8,8 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='category_id']" position="after">
                 <field name="is_lab"/>
+                <field name="is_startup"/>
+                <field name="is_expert"/>
                 <field name="rndgrid_segment" invisible="is_lab"/>
                 <field name="institute_name" invisible="is_lab"/>
             </xpath>
@@ -23,6 +25,63 @@
                         </list>
                     </field>
                 </page>
+                <page name="rndgrid_startup" string="Startup Info" invisible="not is_startup">
+                    <group>
+                        <group string="Basic Info">
+                            <field name="founded_year"/>
+                            <field name="industry_work_area"/>
+                            <field name="target_market_segment"/>
+                        </group>
+                        <group string="Innovation &amp; IP">
+                            <field name="patents_filed"/>
+                            <field name="patents_granted"/>
+                            <field name="patent_detail"/>
+                            <field name="awards_recognition"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="startup_overview" nolabel="1"/>
+                    </group>
+                </page>
+                <page name="rndgrid_expert" string="Expert Info" invisible="not is_expert">
+                    <group>
+                        <group string="Links">
+                            <field name="linkedin_url" widget="url"/>
+                            <field name="google_scholar_url" widget="url"/>
+                        </group>
+                        <group string="Academic &amp; Professional Background">
+                            <field name="highest_degree"/>
+                            <field name="field_of_research"/>
+                            <field name="current_affiliation"/>
+                            <field name="current_position"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Experience Summary">
+                            <field name="research_experience_years"/>
+                            <field name="total_publications"/>
+                            <field name="total_patents_ip"/>
+                        </group>
+                        <group string="Services">
+                            <field name="services_provided"/>
+                            <field name="other_services_expert"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_res_partner_filter_rndgrid" model="ir.ui.view">
+        <field name="name">res.partner.select.rndgrid</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='type_person']" position="after">
+                <separator/>
+                <filter string="Labs" name="filter_is_lab" domain="[('is_lab', '=', True)]"/>
+                <filter string="Startups" name="filter_is_startup" domain="[('is_startup', '=', True)]"/>
+                <filter string="Experts" name="filter_is_expert" domain="[('is_expert', '=', True)]"/>
             </xpath>
         </field>
     </record>
