@@ -160,6 +160,72 @@ class RndGridApiController(http.Controller):
                 status=500
             )
 
+    @http.route('/api/rndgrid/get/booking_history', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_booking_history(self, **kwargs):
+        """
+        Public endpoint to get booking history (crm.lead) for a given mobile number.
+        """
+        mobile = kwargs.get('mobile')
+        if mobile:
+            mobile = mobile.strip()
+        if not mobile:
+            return request.make_response(
+                json.dumps({'status': 'error', 'message': 'Mobile parameter is required'}),
+                headers=[('Content-Type', 'application/json')],
+                status=400
+            )
+
+        try:
+            partner = request.env['res.partner'].sudo().search([('phone', 'ilike', mobile)], limit=1)
+            
+            if not partner:
+                return request.make_response(
+                    json.dumps({'status': 'error', 'message': 'Partner not found'}),
+                    headers=[('Content-Type', 'application/json')],
+                    status=404
+                )
+
+            leads = request.env['crm.lead'].sudo().search([('partner_id', '=', partner.id)])
+            data = []
+            
+            has_test_lines = 'rndgrid_test_line_ids' in request.env['crm.lead']._fields
+
+            for lead in leads:
+                lead_data = {
+                    'id': lead.id,
+                    'name': lead.name,
+                    'expected_revenue': lead.expected_revenue,
+                    'description': lead.description,
+                    'stage': lead.stage_id.name if lead.stage_id else None,
+                    'tests': []
+                }
+                
+                if has_test_lines:
+                    for line in lead.rndgrid_test_line_ids:
+                        test_data = {
+                            'id': line.id,
+                            'instrument_id': line.instrument_id.id if line.instrument_id else None,
+                            'instrument_name': line.instrument_id.name if line.instrument_id else None,
+                            'material_name': line.rndgrid_material_name,
+                            'sample_type': line.rndgrid_sample_type,
+                            'is_hazardous': line.rndgrid_is_hazardous,
+                            'test_ids': [{'id': t.id, 'name': t.name} for t in line.test_ids]
+                        }
+                        lead_data['tests'].append(test_data)
+                
+                data.append(lead_data)
+
+            return request.make_response(
+                json.dumps({'status': 'success', 'data': data}),
+                headers=[('Content-Type', 'application/json')]
+            )
+        except Exception as e:
+            return request.make_response(
+                json.dumps({'status': 'error', 'message': str(e)}),
+                headers=[('Content-Type', 'application/json')],
+                status=500
+            )
+
     @http.route('/api/rndgrid/create/user', type='json', auth='public', methods=['POST'], csrf=False)
     def create_partner(self, **payload):
         """
