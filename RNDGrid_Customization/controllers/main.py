@@ -416,6 +416,10 @@ class RndGridApiController(http.Controller):
                 'patent_detail': payload.get('patent_detail'),
             }
 
+            # Map the logo to Odoo's native image field if provided
+            if payload.get('startup_logo'):
+                company_vals['image_1920'] = payload.get('startup_logo')
+
             if payload.get('patents_filed'):
                 try: company_vals['patents_filed'] = int(payload.get('patents_filed'))
                 except: pass
@@ -436,21 +440,33 @@ class RndGridApiController(http.Controller):
                     'email': founder.get('email'),
                     'phone': founder.get('phone'),
                     'comment': founder.get('intro'),
+                    'website': founder.get('linkedin_url'),
                 }
+                if founder.get('profile_image_url'):
+                    founder_vals['image_1920'] = founder.get('profile_image_url')
+                    
                 f_record = request.env['res.partner'].sudo().create(founder_vals)
                 founder_ids.append(f_record.id)
 
-            # Process Document URL
-            document_url = payload.get('document_url')
-            if document_url:
-                request.env['ir.attachment'].sudo().create({
-                    'name': 'Startup Document (S3)',
-                    'type': 'url',
-                    'url': document_url,
-                    'res_model': 'res.partner',
-                    'res_id': company.id
-                })
-                company.sudo().message_post(body=f"Document uploaded via API: <a href='{document_url}' target='_blank'>View Document</a>")
+            # Process Document URLs
+            document_urls = payload.get('document_urls', [])
+            if isinstance(document_urls, list) and document_urls:
+                attachment_msgs = []
+                for idx, url in enumerate(document_urls):
+                    if not url:
+                        continue
+                    request.env['ir.attachment'].sudo().create({
+                        'name': f'Startup Document {idx+1} (S3)',
+                        'type': 'url',
+                        'url': url,
+                        'res_model': 'res.partner',
+                        'res_id': company.id
+                    })
+                    attachment_msgs.append(f"<a href='{url}' target='_blank'>Document {idx+1}</a>")
+                
+                if attachment_msgs:
+                    links_html = ", ".join(attachment_msgs)
+                    company.sudo().message_post(body=f"Documents uploaded via API: {links_html}")
 
             return {
                 'status': 'success',
