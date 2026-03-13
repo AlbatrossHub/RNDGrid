@@ -112,3 +112,108 @@ class RndGridApiController(http.Controller):
                 headers=[('Content-Type', 'application/json')],
                 status=500
             )
+
+    @http.route('/api/rndgrid/get/user', type='http', auth='public', methods=['GET'], csrf=False, cors='*')
+    def get_partners(self, **kwargs):
+        """
+        Public endpoint to get a res.partner object by phone number.
+        """
+        phone = kwargs.get('mobile').strip()
+        if not phone:
+            return request.make_response(
+                json.dumps({'status': 'error', 'message': 'Phone parameter is required'}),
+                headers=[('Content-Type', 'application/json')],
+                status=400
+            )
+            
+        try:
+            partner = request.env['res.partner'].sudo().search([('phone', 'ilike', phone)], limit=1)
+            
+            if not partner:
+                return request.make_response(
+                    json.dumps({'status': 'error', 'message': 'Partner not found'}),
+                    headers=[('Content-Type', 'application/json')],
+                    status=404
+                )
+            
+            data = {
+                'id': partner.id,
+                'name': partner.name,
+                'user_type': partner.rndgrid_segment,
+                'email': partner.email,
+                'phone': partner.phone,
+                'gst_no': partner.vat,
+                'zip': partner.zip,
+                'city': partner.city,
+                'state': partner.state_id.name if partner.state_id else None,
+                'street': partner.street,
+            }
+
+            return request.make_response(
+                json.dumps({'status': 'success', 'data': data}),
+                headers=[('Content-Type', 'application/json')]
+            )
+        except Exception as e:
+            return request.make_response(
+                json.dumps({'status': 'error', 'message': str(e)}),
+                headers=[('Content-Type', 'application/json')],
+                status=500
+            )
+
+    @http.route('/api/rndgrid/create/user', type='json', auth='public', methods=['POST'], csrf=False)
+    def create_partner(self, **payload):
+        """
+        Public endpoint to create a new res.partner object.
+        """
+        name = payload.get('name')
+        if not name:
+            return {'status': 'error', 'message': 'Name is required'}
+            
+        partner_vals = {
+            'name': name,
+            'rndgrid_segment': payload.get('user_type'),
+            'email': payload.get('email'),
+            'phone': payload.get('phone'),
+            'vat': payload.get('gst_no'),
+            'zip': payload.get('zip'),
+            'city': payload.get('city'),
+            'street': payload.get('street'),
+        }
+        
+        state_name = payload.get('state')
+        if state_name:
+            state = request.env['res.country.state'].sudo().search([
+                '|', 
+                ('name', 'ilike', state_name), 
+                ('code', '=ilike', state_name)
+            ], limit=1)
+            if state:
+                partner_vals['state_id'] = state.id
+                
+        try:
+            partner = request.env['res.partner'].sudo().create(partner_vals)
+            
+            document_url = payload.get('document_url')
+            if document_url:
+                # Create a URL attachment
+                request.env['ir.attachment'].sudo().create({
+                    'name': 'Customer Document (S3)',
+                    'type': 'url',
+                    'url': document_url,
+                    'res_model': 'res.partner',
+                    'res_id': partner.id
+                })
+                # Post a message to chatter with the link
+                msg = f"Document uploaded via API: <a href='{document_url}' target='_blank'>View Document</a>"
+                partner.sudo().message_post(body=msg)
+                
+            return {
+                'status': 'success',
+                'partner_id': partner.id,
+                'message': 'Partner created successfully'
+            }
+        except Exception as e:
+            return {
+                'status': 'error',
+                'message': str(e)
+            }
