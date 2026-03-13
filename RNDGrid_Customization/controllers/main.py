@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+import base64
+import json
+import requests
+
 from odoo import http
 from odoo.http import request
-import json
 
 class RndGridApiController(http.Controller):
 
@@ -439,9 +442,15 @@ class RndGridApiController(http.Controller):
                     'comment': founder.get('intro'),
                     'website': founder.get('linkedin_url'),
                 }
-                if founder.get('profile_image_url'):
-                    founder_vals['image_1920'] = founder.get('profile_image_url')
-                    
+                profile_image_url = founder.get('profile_image_url')
+                if profile_image_url:
+                    try:
+                        response = requests.get(profile_image_url, timeout=10)
+                        if response.status_code == 200:
+                            founder_vals['image_1920'] = base64.b64encode(response.content).decode('utf-8')
+                    except Exception:
+                        pass
+                        
                 f_record = request.env['res.partner'].sudo().create(founder_vals)
                 founder_ids.append(f_record.id)
 
