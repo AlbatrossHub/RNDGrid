@@ -406,6 +406,7 @@ class RndGridApiController(http.Controller):
             # Create Startup Company
             company_vals = {
                 'name': startup_name,
+                'phone': payload.get('mobile'),
                 'is_company': True,
                 'is_startup': True,
                 'founded_year': founded_year,
