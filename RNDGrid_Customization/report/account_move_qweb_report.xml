@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_invoice_document_custom" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[@name='origin']" position="replace"/>
+        
+        <xpath expr="//div[@id='right-elements']" position="before">
+            <div id="left-elements" t-attf-class="#{'col-6 mt-5' if report_type == 'pdf' else 'col-12 col-md-6'} d-inline-block float-start" style="page-break-inside: avoid;">
+                <div class="row w-100">
+                    <div class="col-7 pt-2">
+                        <strong>Account Details</strong><br/>
+                        RNDGRID PRIVATE LIMITED<br/>
+                        A/c: 10105736550<br/>
+                        Bank: IDFC First Bank<br/>
+                        IFSC: IDFB0040315
+                    </div>
+                    <div class="col-5 text-center" t-if="o.qr_code_image">
+                        <strong>Scan to Pay via UPI</strong><br/>
+                        <img t-att-src="image_data_uri(o.qr_code_image)" style="width: 28mm; height: 28mm; margin-top: 5px;"/>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[@name='comment']" position="before">
+            <div style="page-break-before: always;"/>
+        </xpath>
+    </template>
+</odoo>

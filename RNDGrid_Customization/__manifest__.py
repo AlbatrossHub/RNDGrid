@@ -14,7 +14,7 @@ Manage Labs (vendors), Instruments, and specific pricing segments (Student, Star
     """,
     'category': 'Customizations',
     'author': 'RNDGrid',
-    'depends': ['base', 'contacts', 'product'],
+    'depends': ['base', 'contacts', 'product', 'account'],
     'data': [
         'security/ir.model.access.csv',
         'views/rndgrid_menus.xml',
@@ -22,6 +22,8 @@ Manage Labs (vendors), Instruments, and specific pricing segments (Student, Star
         'views/res_partner_views.xml',
         'views/product_template_views.xml',
         'views/product_supplierinfo_views.xml',
+        "report/account_move_qweb_report.xml",
+        "report/invoice_hsn.xml",
     ],
     'installable': True,
     'application': True,
