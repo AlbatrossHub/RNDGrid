@@ -11,6 +11,10 @@ class AccountMove(models.Model):
         compute='_compute_qr_code_image',
         store=False,
     )
+    include_sign = fields.Boolean(
+        string="Include Sign?",
+        default=False,
+    )
 
     @api.depends('amount_total', 'currency_id', 'move_type')
     def _compute_qr_code_image(self):

@@ -24,5 +24,20 @@
         <xpath expr="//div[@name='comment']" position="before">
             <div style="page-break-before: always;"/>
         </xpath>
+
+        <xpath expr="//div[@t-if='o.show_signature_area']" position="replace">
+            <div t-if="o.show_signature_area or o.include_sign" t-attf-class="#{'col-12 mt-4' if report_type != 'html' else 'col-lg-5 offset-lg-7 col-md-12 mt-4'}">
+                <t t-if="o.include_sign and o.invoice_user_id.signature">
+                    <div class="text-center w-100 mb-2" style="max-height: 6rem; overflow: hidden;" t-out="o.invoice_user_id.signature"/>
+                </t>
+                <t t-elif="o.signature">
+                    <img t-att-src="image_data_uri(o.signature)" class="img-fluid mx-auto mb-2" style="max-height: 6rem; display: block;"/>
+                </t>
+                <t t-else="">
+                    <div class="col-12" style="min-height: 6rem"/>
+                </t>
+                <p class="mx-auto text-center w-100" style="border-top: thin solid; clear: both; padding-top: 5px;">Authorized signatory</p>
+            </div>
+        </xpath>
     </template>
 </odoo>
